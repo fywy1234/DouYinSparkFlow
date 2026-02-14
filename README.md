@@ -18,6 +18,7 @@
 
 ```shell
 pip install -r requirements.txt
+cp usersData.example.json usersData.json
 ```
 
 ### 2. 运行main.py
