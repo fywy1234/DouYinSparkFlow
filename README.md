@@ -4,20 +4,6 @@
 ![Playwright](https://img.shields.io/badge/Playwright-%E2%9C%94-green?logo=playwright)
 ![chrome-headless-shell](https://img.shields.io/badge/chrome--headless--shell-%E2%9C%94-brightgreen?logo=googlechrome)
 
-## 🎉 2026 正月限定（除夕至正月十五）
-
-除夕当天到正月十五期间，可开启祝福模式，每日向好友发送与当日相关的祝福语。
-
-### 启用方法
-
-拉取最新代码后，将 `config.json` 中 `happyNewYear` 下的 `enabled` 设为 `true`。
-
-`happyNewYear.messageTemplate` 为正月祝福模板，支持以下占位符：
-
-1. `[API]`：祝福语
-2. `[data]`：公历日期，例如 2026年02月16日
-3. `[data_lunar]`：农历日期，例如 农历除夕、正月初一、正月初二 等
-
 ## 交流讨论
 
 已开放讨论区，有疑问或展示相关成果，发布话题需求的可以加入讨论
@@ -42,55 +28,61 @@
 
 ## 🚀 使用方法
 
-### 1. 克隆项目到本地，并完成环境配置
+### 1. 获取配置信息
 
-```shell
-pip install -r requirements.txt
-cp usersData.example.json usersData.json
-```
+访问 [DouYinSparkFlow 配置生成器]() 按照提示填写配置信息
 
-### 2. 运行main.py
+> cookies的获取需要借助于[Cookie-Editor](https://cookie-editor.com/)浏览器扩展，根据自己浏览器环境安装此浏览器扩展
 
-首次运行`python main.py`时，会自动下载需要的测试浏览器，默认从Mozilla的镜像站下载，需要保证网络通畅。
+![配置生成器](docs/images/配置生成器.png)
+![账号信息获取](docs/images/账号信息获取.png)
+![Cookies获取](docs/images/Cookies获取.png)
+![好友昵称获取](docs/images/好友昵称获取.png)
 
-![main.py运行截图](docs/images/屏幕截图%202026-02-14%20223607.png)
+### 2. 配置参数说明
 
-### 3. 登录用户
+|名称|作用解释|期望值|获取方法|
+|-----|-----|-----|-----|
+|代理地址（暂未实现）|-|-|-|
+|消息模板|发送消息的模板，可以从抖音聊天框编辑好后直接复制过来，这样可以拿到简单表情的代码，例如`[盖瑞]`|使用`[API]`引用每日一言内容 默认值为： `[盖瑞]今日火花[加一]\n—— [右边] 每日一言 [左边] ——\n[API]`|按需编写|
+|一言类型|每日一言消息允许的类型|全部可选类型的列表为：`["动画","漫画","游戏","文学","原创","来自网络","影视","诗词","哲学","抖机灵","其他"]`|按需勾选|
+|浏览器操作最长等待时间|默认即可，自建服务器部署根据网络情况调整|数字类型，单位毫秒|基本无需更改|
+|好友列表等待时间|默认即可，自建服务器部署根据网络情况调整|数字类型，单位毫秒|基本无需更改|
+|任务重试次数|默认即可，自建服务器部署根据网络情况调整|数字类型，单位次|基本无需更改|
+|输出日志级别|Error<Warning<Info<Debug，越小打印输出日志越少|Error、Warning、Info、Debug|默认为Info,建议根据需要更改为Debug获取更多调试信息|
+|用户名|当前任务账号的用户名仅用作标识|字符串|[抖音创作者中心](https://creator.douyin.com/)获取|
+|抖音号|当前任务账号的抖音号|根据账户页面填写|[抖音创作者中心](https://creator.douyin.com/)获取|
+|Cookies|当前任务账号的Cookies|根据账户页面填写，需要导出为json|登录[抖音创作者中心](https://creator.douyin.com/)后，使用[Cookie-Editor](https://cookie-editor.com/)浏览器扩展获取|
+|好友昵称（回车）|需要发送消息的好友昵称，输入回车添加，可添加多个|填写原始昵称【不能是备注】|[抖音创作者中心](https://creator.douyin.com/)后，互动管理->私信管理获取|
 
-运行main.py后，会弹出可选择的项目，这时选择添加用户登录，你可以选择添加多个用户。具体操作方式根据提示在弹出窗口扫码登录抖音创作者中心即可，登录成功后你需要根据提示查看对应联系人的名称，并在控制台输入。
+### 3. Github Acion部署
 
-### 4. 更改配置
+本项目可以部署到Github Action每日定时触发，
 
-你可以选择更改config.json中的配置，目前proxyAddress的代理设置还没有实现。其他项目解释如下：
+1. 首先克隆当前仓库（ps: 点击fork）
 
-|名称|作用解释|期望值|
-|-----|-----|-----|
-|multiTask|是否启用多任务，登录多个账户后生效，启用后同时操作多个账户的任务加快执行速度|`true` `false`|
-|taskCount|最大同时操作的账户数目，需要先启用multiTask|int，默认`5`|
-|messageTemplate|发送消息的模板，可以从抖音聊天框编辑好后直接复制过来，这样可以拿到简单表情的代码，例如`[盖瑞]`|使用`[API]`引用每日一言内容 默认值为： `[盖瑞]今日火花[加一]\n—— [右边] 每日一言 [左边] ——\n[API]`|
-|hitokotoTypes|每日一言消息允许的类型|可以留空使用所有类型`[]`,全部可选类型的列表为：`["动画","漫画","游戏","文学","原创","来自网络","影视","诗词","哲学","抖机灵","其他"]`|
+2. 在你自己克隆后的仓库下新建名为`user-data`的环境变量空间
 
-### 5. 测试运行
+> 方法: 在你的Github仓库下操作，选择settings->Environments，在下面新建一个`user-data`环境
 
-再次运行main.py之后选择`3.本地运行任务`,查看是否能够正常执行任务
-
-### 6. Github Acion部署
-
-项目可以部署到Github Action每日定时触发，在测试完毕后，你需要将本地代码推送到自己的Github仓库，你也可以选择直接克隆本仓库后续将config.json同步即可（如果你更改了设置的话）。本地通过usersData.json存储已经登录的账户凭证，为了防止信息泄露，Action不能像本地那样从明文读取这个配置，也不要将这个文件上传到Github，正确做法是将内容存放到`secrets`中
-
-> 方法: 在你的Github仓库下操作，选择settings->Environments，在下面新建一个`user-data`环境，继续在这个`user-data`环境的Environment secrets添加名为`USER_DATA`的项目
+3. 逐次复制配置生成器左侧`Environment Variables`下项目到GitHub下的`Environment variables`，复制生成器左侧`Environment Secrets`下项目到GitHub下的`Environment secrets`
 
 ![创建`user-data`环境图](docs/images/屏幕截图%202026-02-14%20224915.png)
 
 关于这个配置的内容可以再次运行main.py,选择`2. 获取Github Action配置`将对应输出内容填入`USER_DATA`的值即可
 
-![填写配置内容图](docs/images/屏幕截图%202026-02-14%20224951.png)
-
-### 7. （可选）手动触发Action进行测试
+4. （可选）手动触发Action进行测试
 
 仓库的工作流中添加了`workflow_dispatch`以便允许进行手动触发，在初次配置完成后可以通过手动触发Action来进行验证。
 
 ![手动测试](docs/images/屏幕截图%202026-02-14%20224614.png)
+
+### 4. 服务器，自定义环境部署
+
+1. 首先拉取当前仓库到对应设备`https://github.com/2061360308/DouYinSparkFlow.git`
+2. 安装依赖`pip install -r requirements.txt`
+3. 在项目根目录下创建`.env`文件，点击配置生成器左侧最下方` 复制 .env 配置文件 `按钮，得到内容粘贴到`.env`文件中
+4. 项目根目录下执行`python main.py`
 
 ## 💬 问题解答
 

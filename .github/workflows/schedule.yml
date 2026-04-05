@@ -23,10 +23,20 @@ jobs:
         pip install -r requirements.txt
     - name: Ensure browsers are installed
       run: playwright install chromium --with-deps --only-shell
-    - name: Run DouYin Spark Flow
+    - name: Export Github Environment Variables and Secrets to JSON
       env:
-        USER_DATA: ${{ secrets.USER_DATA }}
-      run: python main.py --doTask
+        PROXY_ADDRESS: ${{ vars.PROXY_ADDRESS }}
+        MESSAGE_TEMPLATE: ${{ vars.MESSAGE_TEMPLATE }}
+        HITOKOTO_TYPES: ${{ vars.HITOKOTO_TYPES }}
+        BROWSER_TIMEOUT: ${{ vars.BROWSER_TIMEOUT }}
+        FRIEND_LIST_WAIT_TIME: ${{ vars.FRIEND_LIST_WAIT_TIME }}
+        TASK_RETRY_TIMES: ${{ vars.TASK_RETRY_TIMES }}
+        LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+        TASKS: ${{ vars.TASKS }}
+        SECRETS_JSON: ${{ toJson(secrets) }}
+      run: python utils/export_task_cookies.py
+    - name: Run DouYin Spark Flow
+      run: python main.py
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
